@@ -11,13 +11,13 @@ class PetEncoder(nn.Module):
         # TODO T3.1: 3 -> 16 通道，128 -> 64 像素。
         # Hint: nn.Sequential 中依次放 Conv2d、ReLU、MaxPool2d。
         # 3×3 卷积使用 padding=1 保持尺寸；2×2 池化、stride=2 缩小一半。
-        self.stage1 = nn.Identity()
+        self.stage1 = nn.Sequential(nn.Conv2d(3, 16, kernel_size = 3, stride = 1, padding = 1), nn.ReLU(), nn.MaxPool2d(kernel_size = 2, stride = 2),)
         # TODO T3.2: 16 -> 32 通道，64 -> 32 像素。
         # Hint: 上一层 out_channels 必须等于这一层 in_channels。
-        self.stage2 = nn.Identity()
+        self.stage2 = nn.Sequential(nn.Conv2d(16, 32, kernel_size = 3, stride = 1, padding = 1), nn.ReLU(), nn.MaxPool2d(kernel_size = 2, stride = 2), )
         # TODO T3.3: 32 -> 64 通道，32 -> 16 像素。
         # Hint: 不要 Flatten，解码器还需要空间位置。
-        self.stage3 = nn.Identity()
+        self.stage3 = nn.Sequential(nn.Conv2d(32, 64, kernel_size = 3, stride = 1, padding = 1), nn.ReLU(), nn.MaxPool2d(kernel_size = 2, stride = 2), )
 
     def forward(self, images):
         """依次计算三个阶段。
@@ -31,9 +31,9 @@ class PetEncoder(nn.Module):
         """
         # TODO T3.4: 把下面的占位赋值改为依次调用三个阶段。
         # Hint: 第一个调用形如 self.stage1(images)；后一个接前一个的输出。
-        e1 = images
-        e2 = e1
-        z = e2
+        e1 = self.stage1(images)
+        e2 = self.stage2(e1)
+        z = self.stage3(e2)
         return e1, e2, z
 
 
